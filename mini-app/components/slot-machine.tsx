@@ -16,7 +16,7 @@ export default function SlotMachine() {
   const [grid, setGrid] = useState<Fruit[][]>(Array.from({ length: 3 }, () => Array.from({ length: 3 }, randomFruit)));
   const [spinning, setSpinning] = useState(false);
   const [win, setWin] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const spin = () => {
     if (spinning) return;
@@ -55,6 +55,15 @@ export default function SlotMachine() {
   useEffect(() => {
     if (hasWin) setWin(true);
   }, [hasWin]);
+
+  // Cleanup interval on component unmount
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className="flex flex-col items-center gap-4">
